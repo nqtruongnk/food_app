@@ -1,6 +1,8 @@
 import 'dart:ui';
 
-import 'package:app_food/scr/commons.dart';
+import 'package:app_food/scr/helpers/screen_navigation.dart';
+import 'package:app_food/scr/helpers/style.dart';
+import 'package:app_food/scr/screens/bag.dart';
 import 'package:app_food/scr/widgets/bottom_navigation_icons.dart';
 import 'package:app_food/scr/widgets/categories.dart';
 import 'package:app_food/scr/widgets/custom_text.dart';
@@ -248,6 +250,13 @@ class _HomeState extends State<Home> {
                 name: 'Home',
               ),
               BottomNavIcon(
+                image: 'target.png',
+                name: 'Near by',
+              ),
+              BottomNavIcon(
+                onTap: () {
+                  changeScreen(context, ShoppingBag());
+                },
                 image: 'shopping-bag.png',
                 name: 'Cart',
               ),
