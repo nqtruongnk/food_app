@@ -11,15 +11,6 @@ class ShoppingBag extends StatefulWidget {
 }
 
 class _ShoppingBagState extends State<ShoppingBag> {
-  Product product = Product(
-      name: 'Cereals',
-      price: 15.99,
-      rating: 4.2,
-      vendor: 'GoodFoods',
-      wishList: true,
-      detail:
-          'Just two years ago, the outlook was gloomy for the ready-to-eat cereals market, but the sector is experiencing a resurgence',
-      image: '1.jpg');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,49 +74,49 @@ class _ShoppingBagState extends State<ShoppingBag> {
       backgroundColor: white,
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              height: 120,
-              decoration: BoxDecoration(color: white, boxShadow: [
-                BoxShadow(
-                  color: Colors.red[50],
-                  offset: Offset(3, 5),
-                  blurRadius: 30,
-                )
-              ]),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'images/${product.image}',
-                    height: 120,
-                    width: 120,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: product.name + '\n',
-                            style: TextStyle(color: black, fontSize: 20)),
-                        TextSpan(
-                            text: '\$' + product.price.toString() + '\n',
-                            style: TextStyle(
-                                color: black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold)),
-                      ])),
-                      SizedBox(
-                        width: 100,
-                      ),
-                      IconButton(icon: Icon(Icons.delete), onPressed: null)
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(10.0),
+          //   child: Container(
+          //     height: 120,
+          //     decoration: BoxDecoration(color: white, boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.red[50],
+          //         offset: Offset(3, 5),
+          //         blurRadius: 30,
+          //       )
+          //     ]),
+          //     child: Row(
+          //       children: [
+          //         Image.asset(
+          //           'images/${product.image}',
+          //           height: 120,
+          //           width: 120,
+          //         ),
+          //         Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             RichText(
+          //                 text: TextSpan(children: [
+          //               TextSpan(
+          //                   text: product.name + '\n',
+          //                   style: TextStyle(color: black, fontSize: 20)),
+          //               TextSpan(
+          //                   text: '\$' + product.price.toString() + '\n',
+          //                   style: TextStyle(
+          //                       color: black,
+          //                       fontSize: 17,
+          //                       fontWeight: FontWeight.bold)),
+          //             ])),
+          //             SizedBox(
+          //               width: 100,
+          //             ),
+          //             IconButton(icon: Icon(Icons.delete), onPressed: null)
+          //           ],
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

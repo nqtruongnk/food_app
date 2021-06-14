@@ -6,29 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../helpers/style.dart';
 
-List<Product> productsList = [
-  Product(
-      name: 'Cereals',
-      price: 15.99,
-      rating: 4.2,
-      vendor: 'GoodFoods',
-      wishList: true,
-      image: '1.jpg'),
-  Product(
-      name: 'Taccos',
-      price: 12.99,
-      rating: 4.7,
-      vendor: 'GoodFoods',
-      wishList: false,
-      image: '5.jpg'),
-  Product(
-      name: 'Cereals',
-      price: 15.99,
-      rating: 4.2,
-      vendor: 'GoodFoods',
-      wishList: true,
-      image: '1.jpg'),
-];
+List<ProductModel> productsList = [];
 
 class Featured extends StatelessWidget {
   const Featured({Key key}) : super(key: key);
@@ -36,7 +14,7 @@ class Featured extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 240,
+      height: 100,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: productsList.length,
@@ -94,17 +72,11 @@ class Featured extends StatelessWidget {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: productsList[index].wishList
-                                    ? Icon(
-                                        Icons.favorite,
-                                        color: red,
-                                        size: 18,
-                                      )
-                                    : Icon(
-                                        Icons.favorite_border,
-                                        color: red,
-                                        size: 18,
-                                      ),
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: red,
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),

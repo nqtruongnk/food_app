@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 
 class Details extends StatefulWidget {
-  final Product product;
+  final ProductModel product;
   Details({Key key, @required this.product}) : super(key: key);
 
   @override

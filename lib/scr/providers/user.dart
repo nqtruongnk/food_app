@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 enum Status { Uninitialized, Unauthenticated, Authenticating, Authenticated }
 
-class AuthProvider with ChangeNotifier {
+class UserProvider with ChangeNotifier {
   FirebaseAuth _auth;
   FirebaseUser _user;
   Status _status = Status.Uninitialized;
@@ -15,7 +15,7 @@ class AuthProvider with ChangeNotifier {
   UserModel _userModel;
 
   Status get status => _status;
-
+  UserModel get userModel => _userModel;
   FirebaseUser get user => _user;
 
   final formKey = GlobalKey<FormState>();
@@ -23,7 +23,7 @@ class AuthProvider with ChangeNotifier {
   TextEditingController name = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  AuthProvider.initialize() : _auth = FirebaseAuth.instance {
+  UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.onAuthStateChanged.listen(_onStateChange);
   }
 
@@ -32,11 +32,21 @@ class AuthProvider with ChangeNotifier {
       _status = Status.Authenticating;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(
-          email: email.text, password: password.text);
+          email: email.text.trim(), password: password.text.trim());
       return true;
     } catch (e) {
-      return _onError(e.toString());
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      print(e.toString());
+      return false;
     }
+  }
+
+  Future signOut() {
+    _auth.signOut();
+    _status = Status.Unauthenticated;
+    notifyListeners();
+    return Future.delayed(Duration.zero);
   }
 
   Future<bool> signUp() async {
@@ -45,26 +55,23 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       await _auth
           .createUserWithEmailAndPassword(
-              email: email.text, password: password.text)
-          .then((user) {
-        Map<String, dynamic> values = {
+              email: email.text.trim(), password: password.text.trim())
+          .then((results) {
+        _firestore.collection('users').document(results.user.uid).setData({
           'name': name.text,
           'email': email.text,
-          'id': user.user.uid
-        };
-        _userServices.createUser(values);
+          'uid': results.user.uid,
+          'likedFood':[],
+          'likedRestaurants':[]
+        });
       });
       return true;
     } catch (e) {
-      return _onError(e.toString());
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      print(e.toString());
+      return false;
     }
-  }
-
-  bool _onError(String error) {
-    _status = Status.Unauthenticated;
-    notifyListeners();
-    print('We get an error: $error');
-    return false;
   }
 
   Future<void> _onStateChange(FirebaseUser firebaseUser) async {
@@ -76,5 +83,19 @@ class AuthProvider with ChangeNotifier {
       _userModel = await _userServices.getUserById(firebaseUser.uid);
     }
     notifyListeners();
+  }
+
+  // gernernal methods
+  // bool _onError(String error) {
+  //   _status = Status.Unauthenticated;
+  //   notifyListeners();
+  //   print('We get an error: $error');
+  //   return false;
+  // }
+
+  void clearController() {
+    email.text = '';
+    password.text = '';
+    name.text = '';
   }
 }

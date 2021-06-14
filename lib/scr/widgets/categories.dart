@@ -1,70 +1,79 @@
 import 'package:app_food/scr/models/category.dart';
+import 'package:app_food/scr/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../helpers/style.dart';
 import 'custom_text.dart';
 
-List<Category> categoriesList = [
-  Category(name: 'Salad', image: 'salad.png'),
-  Category(name: 'Steak', image: 'steak.jpg'),
-  Category(name: 'Fast food', image: 'sandwich.png'),
-  Category(name: 'Deserts', image: 'ice-cream.png'),
-  Category(name: 'Sea food', image: 'fish.jpg'),
-  Category(name: 'Beer', image: 'pint.png')
-];
+class CategoryWidget extends StatelessWidget {
+  final CategoryModel category;
+  const CategoryWidget({Key key, this.category}) : super(key: key);
 
-class Categories extends StatefulWidget {
-  const Categories({Key key}) : super(key: key);
-
-  @override
-  _CategoriesState createState() => _CategoriesState();
-}
-
-class _CategoriesState extends State<Categories> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 95,
-      child: ListView.builder(
-        itemCount: categoriesList.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.red[50],
-                        offset: Offset(4, 6),
-                        blurRadius: 20,
-                      )
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Image.asset(
-                      'images/${categoriesList[index].image}',
-                      width: 50,
-                      height: 50,
+      margin: const EdgeInsets.only(right: 5),
+      child: Stack(
+        children: [
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Loading(),
+                      ),
                     ),
-                  ),
+                    Center(
+                      child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: category.image),
+                    )
+                  ],
                 ),
-                SizedBox(
-                  height: 5,
-                ),
-                CustomText(
-                  text: categoriesList[index].name,
-                  size: 14,
-                  color: black,
-                )
-              ],
+              ),
             ),
-          );
-        },
+          ),
+          Container(
+            width: 150,
+            height: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.8),
+                    Colors.black.withOpacity(0.7),
+                    Colors.black.withOpacity(0.6),
+                    Colors.black.withOpacity(0.6),
+                    Colors.black.withOpacity(0.4),
+                    Colors.black.withOpacity(0.1),
+                    Colors.black.withOpacity(0.05),
+                    Colors.black.withOpacity(0.025),
+                  ],
+                )),
+          ),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.center,
+              child: CustomText(
+                text: category.name,
+                color: white,
+                size: 26,
+                weight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
