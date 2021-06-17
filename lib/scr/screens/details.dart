@@ -1,146 +1,84 @@
 import 'package:app_food/scr/helpers/style.dart';
 import 'package:app_food/scr/models/products.dart';
+import 'package:app_food/scr/providers/app.dart';
+import 'package:app_food/scr/providers/user.dart';
 import 'package:app_food/scr/widgets/custom_text.dart';
+import 'package:app_food/scr/widgets/loading.dart';
 import 'package:app_food/scr/widgets/small_floatting_buttom.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:provider/provider.dart';
 
 class Details extends StatefulWidget {
   final ProductModel product;
-  Details({Key key, @required this.product}) : super(key: key);
+
+  const Details({@required this.product});
 
   @override
   _DetailsState createState() => _DetailsState();
 }
 
 class _DetailsState extends State<Details> {
+  int quantity = 1;
+  GlobalKey _key = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
+    final app = Provider.of<AppProvider>(context);
     return Scaffold(
+      key: _key,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: black),
+        backgroundColor: white,
+        elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {},
+          ),
+        ],
+        leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ),
       backgroundColor: white,
       body: SafeArea(
         child: Column(
-          children: [
-            Container(
-              height: 300,
-              child: Stack(
-                children: [
-                  Carousel(
-                    images: [
-                      AssetImage('images/${widget.product.image}'),
-                      AssetImage('images/${widget.product.image}'),
-                      AssetImage('images/${widget.product.image}')
-                    ],
-                    dotBgColor: white,
-                    dotColor: grey,
-                    dotIncreasedColor: red,
-                    dotIncreaseSize: 1.2,
-                    autoplay: false,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          color: black,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Stack(
-                                children: [
-                                  Image.asset(
-                                    'images/shopping-bag.png',
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              right: 5,
-                              bottom: 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: grey,
-                                        offset: Offset(2, 1),
-                                        blurRadius: 3,
-                                      )
-                                    ]),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 4, right: 4),
-                                  child: CustomText(
-                                    text: '2',
-                                    color: red,
-                                    size: 18,
-                                    weight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    right: 20,
-                    bottom: 55,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[400],
-                            offset: Offset(2, 3),
-                            blurRadius: 3,
-                          )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Icon(
-                          Icons.favorite,
-                          size: 22,
-                          color: red,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircleAvatar(
+              radius: 120,
+              backgroundImage: NetworkImage(widget.product.image),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            CustomText(
+                text: widget.product.name, size: 26, weight: FontWeight.bold),
+            CustomText(
+                text: "\$${widget.product.price / 100}",
+                size: 20,
+                weight: FontWeight.w400),
+            SizedBox(
+              height: 10,
+            ),
+            CustomText(text: "Description", size: 18, weight: FontWeight.w400),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.product.description ?? 'null',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: grey, fontWeight: FontWeight.w300),
               ),
-            ),
-            CustomText(
-              text: widget.product.name,
-              size: 26,
-              weight: FontWeight.bold,
-            ),
-            CustomText(
-              text: "\$" + widget.product.price.toString(),
-              size: 20,
-              color: red,
-              weight: FontWeight.w400,
             ),
             SizedBox(
               height: 15,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
@@ -148,23 +86,47 @@ class _DetailsState extends State<Details> {
                         Icons.remove,
                         size: 36,
                       ),
-                      onPressed: () {}),
+                      onPressed: () {
+                        if (quantity != 1) {
+                          setState(() {
+                            quantity -= 1;
+                          });
+                        }
+                      }),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    app.changeLoading();
+                    print('All set loading');
+                    await user.addToCart(
+                        product: widget.product, quantity: quantity);
+                    // if (value) {
+                    //   print('Item added to cart');
+                    //   Scaffold.of(context).showSnackBar(
+                    //       SnackBar(content: Text("Added to cart!")));
+                    //   return;
+                    // } else {
+                    //   print('Item not added to cart');
+                    // }
+
+                    app.changeLoading();
+                    print('Loading set to faild');
+                  },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: red,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(28, 12, 28, 12),
-                      child: CustomText(
-                        text: 'Add To Bag',
-                        color: white,
-                        size: 24,
-                        weight: FontWeight.w600,
-                      ),
-                    ),
+                        color: primary,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: app.isLoaing
+                        ? Loading()
+                        : Padding(
+                            padding: const EdgeInsets.fromLTRB(28, 12, 28, 12),
+                            child: CustomText(
+                              text: "Add $quantity To Cart",
+                              color: white,
+                              size: 22,
+                              weight: FontWeight.w300,
+                            ),
+                          ),
                   ),
                 ),
                 Padding(
@@ -175,10 +137,14 @@ class _DetailsState extends State<Details> {
                         size: 36,
                         color: red,
                       ),
-                      onPressed: () {}),
+                      onPressed: () {
+                        setState(() {
+                          quantity += 1;
+                        });
+                      }),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

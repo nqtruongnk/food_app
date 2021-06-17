@@ -1,8 +1,10 @@
 import 'package:app_food/scr/helpers/user.dart';
+import 'package:app_food/scr/models/products.dart';
 import 'package:app_food/scr/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 enum Status { Uninitialized, Unauthenticated, Authenticating, Authenticated }
 
@@ -61,8 +63,8 @@ class UserProvider with ChangeNotifier {
           'name': name.text,
           'email': email.text,
           'uid': results.user.uid,
-          'likedFood':[],
-          'likedRestaurants':[]
+          'likedFood': [],
+          'likedRestaurants': []
         });
       });
       return true;
@@ -97,5 +99,43 @@ class UserProvider with ChangeNotifier {
     email.text = '';
     password.text = '';
     name.text = '';
+  }
+
+  Future addToCart({ProductModel product, int quantity}) async {
+    print('The product is: ${product.toString()}');
+    print('The product is: ${quantity.toString()}');
+    // try {
+    var uuid = Uuid();
+    String cartItemId = uuid.v4();
+    List cart = _userModel.cart;
+    bool itemExits = false;
+    Map cartItem = {
+      'id': cartItemId,
+      'name': product.name,
+      'image': product.image,
+      'productId': product.id,
+      'price': product.price,
+      'quantity': quantity
+    };
+
+    for (Map item in cart) {
+      if (item['productId'] == cartItem['productId']) {
+        item['quantity'] = item['quantity'] + quantity;
+        itemExits = true;
+        break;
+      }
+    }
+
+    if (!itemExits) {
+      _userModel.cart.add(cartItem);
+    }
+    print('cart item are: ${cart.toString()}');
+
+    _userServices.editCart(userId: _userModel.id, cart: _userModel.cart);
+    return true;
+    // } catch (e) {
+    //   print('the error: ${e.toString()}');
+    //   return false;
+    // }
   }
 }

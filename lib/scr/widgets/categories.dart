@@ -8,40 +8,38 @@ import 'custom_text.dart';
 
 class CategoryWidget extends StatelessWidget {
   final CategoryModel category;
+
   const CategoryWidget({Key key, this.category}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 5),
+    return Padding(
+      padding: const EdgeInsets.all(6),
       child: Stack(
-        children: [
+        children: <Widget>[
           Container(
-            child: Padding(
-              padding: const EdgeInsets.all(0),
-              child: ClipRRect(
+            width: 140,
+            height: 160,
+            child: ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: Stack(
-                  children: [
+                  children: <Widget>[
                     Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Loading(),
-                      ),
-                    ),
+                        child: Align(
+                      alignment: Alignment.center,
+                      child: Loading(),
+                    )),
                     Center(
                       child: FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
                           image: category.image),
                     )
                   ],
-                ),
-              ),
-            ),
+                )),
           ),
           Container(
-            width: 150,
-            height: 100,
+            width: 140,
+            height: 160,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
@@ -51,8 +49,7 @@ class CategoryWidget extends StatelessWidget {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withOpacity(0.6),
                     Colors.black.withOpacity(0.6),
                     Colors.black.withOpacity(0.6),
                     Colors.black.withOpacity(0.4),
@@ -63,16 +60,14 @@ class CategoryWidget extends StatelessWidget {
                 )),
           ),
           Positioned.fill(
-            child: Align(
-              alignment: Alignment.center,
-              child: CustomText(
-                text: category.name,
-                color: white,
-                size: 26,
-                weight: FontWeight.bold,
-              ),
-            ),
-          ),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: CustomText(
+                    text: category.name,
+                    color: white,
+                    size: 26,
+                    weight: FontWeight.w300,
+                  )))
         ],
       ),
     );

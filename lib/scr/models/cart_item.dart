@@ -22,12 +22,20 @@ class CartItemModel {
   int get quantity => _quantity;
   int get price => _price;
 
-  CartItemModel.fromSnapshot(DocumentSnapshot snapshot) {
-    _id = snapshot.data[ID];
-    _name = snapshot.data[NAME];
-    _image = snapshot.data[IMAGE];
-    _productId = snapshot.data[PRODUCT_ID];
-    _quantity = snapshot.data[QUANTITY];
-    _price = snapshot.data[PRICE];
+  CartItemModel.fromMap(Map data) {
+    _id = data[ID];
+    _name = data[NAME];
+    _image = data[IMAGE];
+    _productId = data[PRODUCT_ID];
+    _quantity = data[QUANTITY];
+    _price = data[PRICE];
   }
+  Map topMap() => {
+        ID: _id,
+        IMAGE: _image,
+        NAME: _name,
+        PRODUCT_ID: _productId,
+        QUANTITY: _quantity,
+        PRICE: _price
+      };
 }
